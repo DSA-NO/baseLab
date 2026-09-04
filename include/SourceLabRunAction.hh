@@ -6,13 +6,11 @@
 namespace SourceLab
 {
 class SourceLabDetectorConstruction;
-class SourceLabEventAction;
 
 class SourceLabRunAction : public G4UserRunAction
 {
   public:
-    SourceLabRunAction(SourceLabDetectorConstruction* detectorConstruction = nullptr,
-      SourceLabEventAction* eventAction = nullptr);
+    explicit SourceLabRunAction(SourceLabDetectorConstruction* detectorConstruction = nullptr);
     ~SourceLabRunAction() override = default;
 
     void BeginOfRunAction(const G4Run*) override;
@@ -20,7 +18,6 @@ class SourceLabRunAction : public G4UserRunAction
 
   private:
     SourceLabDetectorConstruction* fDetectorConstruction = nullptr;
-    SourceLabEventAction* fEventAction = nullptr;
 };
 
 }  // namespace SourceLab

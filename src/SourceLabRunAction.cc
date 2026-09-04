@@ -10,9 +10,8 @@
 namespace SourceLab
 {
 
-SourceLabRunAction::SourceLabRunAction(SourceLabDetectorConstruction* detectorConstruction,
-  SourceLabEventAction* eventAction)
-: fDetectorConstruction(detectorConstruction), fEventAction(eventAction)
+SourceLabRunAction::SourceLabRunAction(SourceLabDetectorConstruction* detectorConstruction)
+: fDetectorConstruction(detectorConstruction)
 {
 }
 
@@ -23,16 +22,23 @@ void SourceLabRunAction::BeginOfRunAction(const G4Run*)
     G4cout << "World size: " << fDetectorConstruction->GetWorldSize() / m << " m" << G4endl;
     G4cout << "Sample depth: " << fDetectorConstruction->GetSampleDepth() / cm << " cm" << G4endl;
   }
-  if (fEventAction) {
-    fEventAction->Reset();
+
+  const auto* eventActionConst = dynamic_cast<const SourceLabEventAction*>(
+    G4RunManager::GetRunManager()->GetUserEventAction());
+  if (eventActionConst) {
+    auto* eventAction = const_cast<SourceLabEventAction*>(eventActionConst);
+    eventAction->Reset();
   }
 }
 
 void SourceLabRunAction::EndOfRunAction(const G4Run* run)
 {
   G4cout << "Run summary: " << run->GetNumberOfEvent() << " events" << G4endl;
-  if (fEventAction) {
-    G4cout << "Total energy deposit in sample: " << fEventAction->GetTotalEnergyDeposit() / MeV << " MeV"
+
+  const auto* eventActionConst = dynamic_cast<const SourceLabEventAction*>(
+    G4RunManager::GetRunManager()->GetUserEventAction());
+  if (eventActionConst) {
+    G4cout << "Total energy deposit in sample: " << eventActionConst->GetTotalEnergyDeposit() / MeV << " MeV"
            << G4endl;
   }
 }

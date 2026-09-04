@@ -21,10 +21,10 @@ void SourceLabActionInitialization::BuildForMaster() const
 
 void SourceLabActionInitialization::Build() const
 {
-  auto* eventAction = new SourceLabEventAction;
   SetUserAction(new SourceLabPrimaryGeneratorAction(fDetectorConstruction));
-  SetUserAction(new SourceLabRunAction(fDetectorConstruction, eventAction));
+  auto* eventAction = new SourceLabEventAction;
   SetUserAction(eventAction);
+  SetUserAction(new SourceLabRunAction(fDetectorConstruction));
 }
 
 }  // namespace SourceLab

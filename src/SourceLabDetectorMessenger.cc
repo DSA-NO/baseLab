@@ -8,6 +8,22 @@
 
 namespace SourceLab
 {
+namespace
+{
+G4double GetDoubleValueFromCommand(G4UIcmdWithADoubleAndUnit* primaryCmd,
+  G4UIcmdWithADoubleAndUnit* legacyCmd,
+  G4UIcommand* command,
+  const G4String& newValue)
+{
+  if (command == legacyCmd && legacyCmd) {
+    return legacyCmd->GetNewDoubleValue(newValue);
+  }
+  if (primaryCmd) {
+    return primaryCmd->GetNewDoubleValue(newValue);
+  }
+  return 0.0;
+}
+}
 
 SourceLabDetectorMessenger::SourceLabDetectorMessenger(SourceLabDetectorConstruction* detector)
 : fDetector(detector)
@@ -131,35 +147,36 @@ SourceLabDetectorMessenger::~SourceLabDetectorMessenger()
 void SourceLabDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
   if (command == fSetWorldSizeCmd || command == fSetWorldSizeLegacyCmd) {
-    const auto value = fSetWorldSizeCmd->GetNewDoubleValue(newValue);
-    fDetector->SetWorldSize(value);
+    fDetector->SetWorldSize(GetDoubleValueFromCommand(fSetWorldSizeCmd, fSetWorldSizeLegacyCmd, command, newValue));
   }
   else if (command == fSetPhantomHalfXCmd) {
-    fDetector->SetPhantomHalfSize(fSetPhantomHalfXCmd->GetNewDoubleValue(newValue),
+    fDetector->SetPhantomHalfSize(GetDoubleValueFromCommand(fSetPhantomHalfXCmd, nullptr, command, newValue),
       fDetector->GetWorldSize(),
       fDetector->GetSampleDepth());
   }
   else if (command == fSetPhantomHalfYCmd) {
     fDetector->SetPhantomHalfSize(fDetector->GetWorldSize(),
-      fSetPhantomHalfYCmd->GetNewDoubleValue(newValue),
+      GetDoubleValueFromCommand(fSetPhantomHalfYCmd, nullptr, command, newValue),
       fDetector->GetSampleDepth());
   }
   else if (command == fSetPhantomHalfZCmd) {
     fDetector->SetPhantomHalfSize(fDetector->GetWorldSize(),
       fDetector->GetSampleDepth(),
-      fSetPhantomHalfZCmd->GetNewDoubleValue(newValue));
+      GetDoubleValueFromCommand(fSetPhantomHalfZCmd, nullptr, command, newValue));
   }
   else if (command == fSetSampleDepthCmd || command == fSetSampleDepthLegacyCmd) {
-    fDetector->SetSampleDepth(fSetSampleDepthCmd->GetNewDoubleValue(newValue));
+    fDetector->SetSampleDepth(GetDoubleValueFromCommand(fSetSampleDepthCmd, fSetSampleDepthLegacyCmd, command, newValue));
   }
   else if (command == fSetSampleRadiusCmd || command == fSetSampleRadiusLegacyCmd) {
-    fDetector->SetSampleSize(fSetSampleRadiusCmd->GetNewDoubleValue(newValue), fDetector->GetSampleThickness());
+    fDetector->SetSampleSize(GetDoubleValueFromCommand(fSetSampleRadiusCmd, fSetSampleRadiusLegacyCmd, command, newValue),
+      fDetector->GetSampleThickness());
   }
   else if (command == fSetSampleThicknessCmd || command == fSetSampleThicknessLegacyCmd) {
-    fDetector->SetSampleSize(fDetector->GetSampleRadius(), fSetSampleThicknessCmd->GetNewDoubleValue(newValue));
+    fDetector->SetSampleSize(fDetector->GetSampleRadius(),
+      GetDoubleValueFromCommand(fSetSampleThicknessCmd, fSetSampleThicknessLegacyCmd, command, newValue));
   }
   else if (command == fSetSourceEnergyCmd || command == fSetSourceEnergyLegacyCmd) {
-    fDetector->SetSourceEnergy(fSetSourceEnergyCmd->GetNewDoubleValue(newValue));
+    fDetector->SetSourceEnergy(GetDoubleValueFromCommand(fSetSourceEnergyCmd, fSetSourceEnergyLegacyCmd, command, newValue));
   }
   else if (command == fSetParticleNameCmd || command == fSetParticleNameLegacyCmd) {
     fDetector->SetSourceParticle(newValue);
@@ -167,7 +184,7 @@ void SourceLabDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newV
   else if (command == fUpdateCmd) {
     G4cout << "sourceLab configuration updated; apply before /run/initialize." << G4endl;
   }
-  else if (command->GetCommandPath() == "/sourceLab/print") {
+  else if (command == fPrintCmd || command->GetCommandPath() == "/sourceLab/print") {
     fDetector->PrintConfig();
   }
 }
@@ -176,6 +193,30 @@ G4String SourceLabDetectorMessenger::GetCurrentValue(G4UIcommand* command)
 {
   if (command == fSetWorldSizeCmd || command == fSetWorldSizeLegacyCmd) {
     return G4UIcommand::ConvertToString(fDetector->GetWorldSize(), "m");
+  }
+  if (command == fSetPhantomHalfXCmd) {
+    return G4UIcommand::ConvertToString(fDetector->GetConfig().phantomHalfX, "m");
+  }
+  if (command == fSetPhantomHalfYCmd) {
+    return G4UIcommand::ConvertToString(fDetector->GetConfig().phantomHalfY, "m");
+  }
+  if (command == fSetPhantomHalfZCmd) {
+    return G4UIcommand::ConvertToString(fDetector->GetConfig().phantomHalfZ, "m");
+  }
+  if (command == fSetSampleDepthCmd || command == fSetSampleDepthLegacyCmd) {
+    return G4UIcommand::ConvertToString(fDetector->GetSampleDepth(), "cm");
+  }
+  if (command == fSetSampleRadiusCmd || command == fSetSampleRadiusLegacyCmd) {
+    return G4UIcommand::ConvertToString(fDetector->GetSampleRadius(), "cm");
+  }
+  if (command == fSetSampleThicknessCmd || command == fSetSampleThicknessLegacyCmd) {
+    return G4UIcommand::ConvertToString(fDetector->GetSampleThickness(), "mm");
+  }
+  if (command == fSetSourceEnergyCmd || command == fSetSourceEnergyLegacyCmd) {
+    return G4UIcommand::ConvertToString(fDetector->GetSourceEnergy(), "MeV");
+  }
+  if (command == fSetParticleNameCmd || command == fSetParticleNameLegacyCmd) {
+    return fDetector->GetSourceParticle();
   }
   return "";
 }
