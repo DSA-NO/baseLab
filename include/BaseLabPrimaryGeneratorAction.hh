@@ -1,8 +1,8 @@
 #ifndef BaseLabPrimaryGeneratorAction_h
 #define BaseLabPrimaryGeneratorAction_h 1
 
+#include "G4GeneralParticleSource.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "G4ParticleGun.hh"
 
 namespace BaseLab
 {
@@ -18,7 +18,7 @@ class BaseLabPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
   private:
     BaseLabDetectorConstruction* fDetectorConstruction = nullptr;
-    G4ParticleGun* fParticleGun = nullptr;
+    G4GeneralParticleSource* fParticleSource = nullptr;
 };
 
 }  // namespace BaseLab
