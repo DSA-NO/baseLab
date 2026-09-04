@@ -1,0 +1,10 @@
+/control/verbose 0
+/tracking/verbose 0
+/run/verbose 0
+/event/verbose 0
+/vis/open OGL
+/vis/viewer/flush
+/vis/drawVolume
+/vis/scene/add/axes 0 0 0 1 m
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate 100
