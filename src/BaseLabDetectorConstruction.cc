@@ -1,5 +1,5 @@
-#include "SourceLabDetectorConstruction.hh"
-#include "SourceLabDetectorMessenger.hh"
+#include "BaseLabDetectorConstruction.hh"
+#include "BaseLabDetectorMessenger.hh"
 
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
@@ -14,21 +14,21 @@
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 
-namespace SourceLab
+namespace BaseLab
 {
 
-SourceLabDetectorConstruction::SourceLabDetectorConstruction()
+BaseLabDetectorConstruction::BaseLabDetectorConstruction()
 {
   DefineMaterials();
-  fMessenger = new SourceLabDetectorMessenger(this);
+  fMessenger = new BaseLabDetectorMessenger(this);
 }
 
-SourceLabDetectorConstruction::~SourceLabDetectorConstruction()
+BaseLabDetectorConstruction::~BaseLabDetectorConstruction()
 {
   delete fMessenger;
 }
 
-void SourceLabDetectorConstruction::DefineMaterials()
+void BaseLabDetectorConstruction::DefineMaterials()
 {
   auto* nist = G4NistManager::Instance();
   nist->FindOrBuildMaterial("G4_AIR");
@@ -36,33 +36,33 @@ void SourceLabDetectorConstruction::DefineMaterials()
   nist->FindOrBuildMaterial("G4_PLEXIGLASS");
 }
 
-void SourceLabDetectorConstruction::SetConfig(const DetectorConfig& config)
+void BaseLabDetectorConstruction::SetConfig(const DetectorConfig& config)
 {
   fConfig = config;
 }
 
-DetectorConfig SourceLabDetectorConstruction::GetConfig() const
+DetectorConfig BaseLabDetectorConstruction::GetConfig() const
 {
   return fConfig;
 }
 
-G4VPhysicalVolume* SourceLabDetectorConstruction::Construct()
+G4VPhysicalVolume* BaseLabDetectorConstruction::Construct()
 {
   return DefineVolumes();
 }
 
-void SourceLabDetectorConstruction::ConstructSDandField()
+void BaseLabDetectorConstruction::ConstructSDandField()
 {
 }
 
-void SourceLabDetectorConstruction::SetWorldSize(G4double worldSize)
+void BaseLabDetectorConstruction::SetWorldSize(G4double worldSize)
 {
   if (worldSize > 0.) {
     fConfig.worldSize = worldSize;
   }
 }
 
-void SourceLabDetectorConstruction::SetPhantomHalfSize(G4double x, G4double y, G4double z)
+void BaseLabDetectorConstruction::SetPhantomHalfSize(G4double x, G4double y, G4double z)
 {
   if (x > 0.)
     fConfig.phantomHalfX = x;
@@ -72,14 +72,14 @@ void SourceLabDetectorConstruction::SetPhantomHalfSize(G4double x, G4double y, G
     fConfig.phantomHalfZ = z;
 }
 
-void SourceLabDetectorConstruction::SetSampleDepth(G4double depth)
+void BaseLabDetectorConstruction::SetSampleDepth(G4double depth)
 {
   if (depth > 0.) {
     fConfig.sampleDepth = depth;
   }
 }
 
-void SourceLabDetectorConstruction::SetSampleSize(G4double radius, G4double thickness)
+void BaseLabDetectorConstruction::SetSampleSize(G4double radius, G4double thickness)
 {
   if (radius > 0.) {
     fConfig.sampleRadius = radius;
@@ -89,53 +89,53 @@ void SourceLabDetectorConstruction::SetSampleSize(G4double radius, G4double thic
   }
 }
 
-void SourceLabDetectorConstruction::SetSourceEnergy(G4double energy)
+void BaseLabDetectorConstruction::SetSourceEnergy(G4double energy)
 {
   if (energy > 0.) {
     fConfig.sourceEnergy = energy;
   }
 }
 
-void SourceLabDetectorConstruction::SetSourceParticle(const G4String& particleName)
+void BaseLabDetectorConstruction::SetSourceParticle(const G4String& particleName)
 {
   if (!particleName.empty()) {
     fConfig.sourceParticle = particleName;
   }
 }
 
-G4double SourceLabDetectorConstruction::GetWorldSize() const
+G4double BaseLabDetectorConstruction::GetWorldSize() const
 {
   return fConfig.worldSize;
 }
 
-G4double SourceLabDetectorConstruction::GetSampleDepth() const
+G4double BaseLabDetectorConstruction::GetSampleDepth() const
 {
   return fConfig.sampleDepth;
 }
 
-G4double SourceLabDetectorConstruction::GetSampleRadius() const
+G4double BaseLabDetectorConstruction::GetSampleRadius() const
 {
   return fConfig.sampleRadius;
 }
 
-G4double SourceLabDetectorConstruction::GetSampleThickness() const
+G4double BaseLabDetectorConstruction::GetSampleThickness() const
 {
   return fConfig.sampleThickness;
 }
 
-G4String SourceLabDetectorConstruction::GetSourceParticle() const
+G4String BaseLabDetectorConstruction::GetSourceParticle() const
 {
   return fConfig.sourceParticle;
 }
 
-G4double SourceLabDetectorConstruction::GetSourceEnergy() const
+G4double BaseLabDetectorConstruction::GetSourceEnergy() const
 {
   return fConfig.sourceEnergy;
 }
 
-void SourceLabDetectorConstruction::PrintConfig() const
+void BaseLabDetectorConstruction::PrintConfig() const
 {
-  G4cout << "SourceLab detector configuration:" << G4endl;
+  G4cout << "BaseLab detector configuration:" << G4endl;
   G4cout << "  worldSize = " << fConfig.worldSize / m << " m" << G4endl;
   G4cout << "  phantomHalf = (" << fConfig.phantomHalfX / m << ", " << fConfig.phantomHalfY / m << ", "
          << fConfig.phantomHalfZ / m << ") m" << G4endl;
@@ -146,7 +146,7 @@ void SourceLabDetectorConstruction::PrintConfig() const
   G4cout << "  sourceParticle = " << fConfig.sourceParticle << G4endl;
 }
 
-G4VPhysicalVolume* SourceLabDetectorConstruction::DefineVolumes()
+G4VPhysicalVolume* BaseLabDetectorConstruction::DefineVolumes()
 {
   auto* worldMat = G4Material::GetMaterial("G4_AIR");
   auto* phantomMat = G4Material::GetMaterial("G4_WATER");
@@ -184,4 +184,4 @@ G4VPhysicalVolume* SourceLabDetectorConstruction::DefineVolumes()
   return worldPhys;
 }
 
-}  // namespace SourceLab
+}  // namespace BaseLab

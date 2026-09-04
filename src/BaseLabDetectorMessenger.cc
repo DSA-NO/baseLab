@@ -1,12 +1,12 @@
-#include "SourceLabDetectorMessenger.hh"
+#include "BaseLabDetectorMessenger.hh"
 
-#include "SourceLabDetectorConstruction.hh"
+#include "BaseLabDetectorConstruction.hh"
 
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIparameter.hh"
 #include "G4UIdirectory.hh"
 
-namespace SourceLab
+namespace BaseLab
 {
 namespace
 {
@@ -25,104 +25,104 @@ G4double GetDoubleValueFromCommand(G4UIcmdWithADoubleAndUnit* primaryCmd,
 }
 }
 
-SourceLabDetectorMessenger::SourceLabDetectorMessenger(SourceLabDetectorConstruction* detector)
+BaseLabDetectorMessenger::BaseLabDetectorMessenger(BaseLabDetectorConstruction* detector)
 : fDetector(detector)
 {
-  auto* geomDir = new G4UIdirectory("/sourceLab/geometry/");
+  auto* geomDir = new G4UIdirectory("/baseLab/geometry/");
   geomDir->SetGuidance("Generic geometry controls");
 
-  auto* sourceDir = new G4UIdirectory("/sourceLab/source/");
+  auto* sourceDir = new G4UIdirectory("/baseLab/source/");
   sourceDir->SetGuidance("Generic source controls");
 
-  auto* rootDir = new G4UIdirectory("/sourceLab/");
-  rootDir->SetGuidance("sourceLab controls");
+  auto* rootDir = new G4UIdirectory("/baseLab/");
+  rootDir->SetGuidance("baseLab controls");
 
-  fSetWorldSizeCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/geometry/worldSize", this);
+  fSetWorldSizeCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/geometry/worldSize", this);
   fSetWorldSizeCmd->SetGuidance("Set the world size");
   fSetWorldSizeCmd->SetParameterName("size", false);
   fSetWorldSizeCmd->SetDefaultUnit("m");
 
-  fSetPhantomHalfXCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/geometry/phantomHalfX", this);
+  fSetPhantomHalfXCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/geometry/phantomHalfX", this);
   fSetPhantomHalfXCmd->SetGuidance("Set half-size of the phantom in x");
   fSetPhantomHalfXCmd->SetParameterName("x", false);
   fSetPhantomHalfXCmd->SetDefaultUnit("m");
 
-  fSetPhantomHalfYCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/geometry/phantomHalfY", this);
+  fSetPhantomHalfYCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/geometry/phantomHalfY", this);
   fSetPhantomHalfYCmd->SetGuidance("Set half-size of the phantom in y");
   fSetPhantomHalfYCmd->SetParameterName("y", false);
   fSetPhantomHalfYCmd->SetDefaultUnit("m");
 
-  fSetPhantomHalfZCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/geometry/phantomHalfZ", this);
+  fSetPhantomHalfZCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/geometry/phantomHalfZ", this);
   fSetPhantomHalfZCmd->SetGuidance("Set half-size of the phantom in z");
   fSetPhantomHalfZCmd->SetParameterName("z", false);
   fSetPhantomHalfZCmd->SetDefaultUnit("m");
 
-  fSetSampleDepthCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/geometry/sampleDepth", this);
+  fSetSampleDepthCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/geometry/sampleDepth", this);
   fSetSampleDepthCmd->SetGuidance("Set the sample depth in the phantom");
   fSetSampleDepthCmd->SetParameterName("depth", false);
   fSetSampleDepthCmd->SetDefaultUnit("cm");
 
-  fSetSampleRadiusCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/geometry/sampleRadius", this);
+  fSetSampleRadiusCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/geometry/sampleRadius", this);
   fSetSampleRadiusCmd->SetGuidance("Set the sample radius");
   fSetSampleRadiusCmd->SetParameterName("radius", false);
   fSetSampleRadiusCmd->SetDefaultUnit("cm");
 
-  fSetSampleThicknessCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/geometry/sampleThickness", this);
+  fSetSampleThicknessCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/geometry/sampleThickness", this);
   fSetSampleThicknessCmd->SetGuidance("Set the sample thickness");
   fSetSampleThicknessCmd->SetParameterName("thickness", false);
   fSetSampleThicknessCmd->SetDefaultUnit("mm");
 
-  fSetSourceEnergyCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/source/energy", this);
+  fSetSourceEnergyCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/source/energy", this);
   fSetSourceEnergyCmd->SetGuidance("Set the primary source energy");
   fSetSourceEnergyCmd->SetParameterName("energy", false);
   fSetSourceEnergyCmd->SetDefaultUnit("MeV");
 
-  fSetParticleNameCmd = new G4UIcommand("/sourceLab/source/particle", this);
+  fSetParticleNameCmd = new G4UIcommand("/baseLab/source/particle", this);
   fSetParticleNameCmd->SetGuidance("Set the primary particle type");
   auto* particleName = new G4UIparameter("particle", 's', false);
   particleName->SetDefaultValue("gamma");
   fSetParticleNameCmd->SetParameter(particleName);
 
-  fUpdateCmd = new G4UIcommand("/sourceLab/update", this);
+  fUpdateCmd = new G4UIcommand("/baseLab/update", this);
   fUpdateCmd->SetGuidance("Update geometry values. Apply this before /run/initialize.");
 
-  fPrintCmd = new G4UIcommand("/sourceLab/print", this);
+  fPrintCmd = new G4UIcommand("/baseLab/print", this);
   fPrintCmd->SetGuidance("Print the current generic detector configuration.");
 
   // Legacy aliases retained for compatibility with the earlier project macros.
-  fSetWorldSizeLegacyCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/setWorldSize", this);
-  fSetWorldSizeLegacyCmd->SetGuidance("Legacy alias for /sourceLab/geometry/worldSize");
+  fSetWorldSizeLegacyCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/setWorldSize", this);
+  fSetWorldSizeLegacyCmd->SetGuidance("Legacy alias for /baseLab/geometry/worldSize");
   fSetWorldSizeLegacyCmd->SetParameterName("size", false);
   fSetWorldSizeLegacyCmd->SetDefaultUnit("m");
 
-  fSetSampleDepthLegacyCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/setSampleDepth", this);
-  fSetSampleDepthLegacyCmd->SetGuidance("Legacy alias for /sourceLab/geometry/sampleDepth");
+  fSetSampleDepthLegacyCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/setSampleDepth", this);
+  fSetSampleDepthLegacyCmd->SetGuidance("Legacy alias for /baseLab/geometry/sampleDepth");
   fSetSampleDepthLegacyCmd->SetParameterName("depth", false);
   fSetSampleDepthLegacyCmd->SetDefaultUnit("cm");
 
-  fSetSampleRadiusLegacyCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/setSampleRadius", this);
-  fSetSampleRadiusLegacyCmd->SetGuidance("Legacy alias for /sourceLab/geometry/sampleRadius");
+  fSetSampleRadiusLegacyCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/setSampleRadius", this);
+  fSetSampleRadiusLegacyCmd->SetGuidance("Legacy alias for /baseLab/geometry/sampleRadius");
   fSetSampleRadiusLegacyCmd->SetParameterName("radius", false);
   fSetSampleRadiusLegacyCmd->SetDefaultUnit("cm");
 
-  fSetSampleThicknessLegacyCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/setSampleThickness", this);
-  fSetSampleThicknessLegacyCmd->SetGuidance("Legacy alias for /sourceLab/geometry/sampleThickness");
+  fSetSampleThicknessLegacyCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/setSampleThickness", this);
+  fSetSampleThicknessLegacyCmd->SetGuidance("Legacy alias for /baseLab/geometry/sampleThickness");
   fSetSampleThicknessLegacyCmd->SetParameterName("thickness", false);
   fSetSampleThicknessLegacyCmd->SetDefaultUnit("mm");
 
-  fSetSourceEnergyLegacyCmd = new G4UIcmdWithADoubleAndUnit("/sourceLab/setSourceEnergy", this);
-  fSetSourceEnergyLegacyCmd->SetGuidance("Legacy alias for /sourceLab/source/energy");
+  fSetSourceEnergyLegacyCmd = new G4UIcmdWithADoubleAndUnit("/baseLab/setSourceEnergy", this);
+  fSetSourceEnergyLegacyCmd->SetGuidance("Legacy alias for /baseLab/source/energy");
   fSetSourceEnergyLegacyCmd->SetParameterName("energy", false);
   fSetSourceEnergyLegacyCmd->SetDefaultUnit("MeV");
 
-  fSetParticleNameLegacyCmd = new G4UIcommand("/sourceLab/setParticle", this);
-  fSetParticleNameLegacyCmd->SetGuidance("Legacy alias for /sourceLab/source/particle");
+  fSetParticleNameLegacyCmd = new G4UIcommand("/baseLab/setParticle", this);
+  fSetParticleNameLegacyCmd->SetGuidance("Legacy alias for /baseLab/source/particle");
   auto* legacyParticleName = new G4UIparameter("particle", 's', false);
   legacyParticleName->SetDefaultValue("gamma");
   fSetParticleNameLegacyCmd->SetParameter(legacyParticleName);
 }
 
-SourceLabDetectorMessenger::~SourceLabDetectorMessenger()
+BaseLabDetectorMessenger::~BaseLabDetectorMessenger()
 {
   delete fSetWorldSizeCmd;
   delete fSetPhantomHalfXCmd;
@@ -144,7 +144,7 @@ SourceLabDetectorMessenger::~SourceLabDetectorMessenger()
   delete fSetParticleNameLegacyCmd;
 }
 
-void SourceLabDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+void BaseLabDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
   if (command == fSetWorldSizeCmd || command == fSetWorldSizeLegacyCmd) {
     fDetector->SetWorldSize(GetDoubleValueFromCommand(fSetWorldSizeCmd, fSetWorldSizeLegacyCmd, command, newValue));
@@ -182,14 +182,14 @@ void SourceLabDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newV
     fDetector->SetSourceParticle(newValue);
   }
   else if (command == fUpdateCmd) {
-    G4cout << "sourceLab configuration updated; apply before /run/initialize." << G4endl;
+    G4cout << "baseLab configuration updated; apply before /run/initialize." << G4endl;
   }
-  else if (command == fPrintCmd || command->GetCommandPath() == "/sourceLab/print") {
+  else if (command == fPrintCmd || command->GetCommandPath() == "/baseLab/print") {
     fDetector->PrintConfig();
   }
 }
 
-G4String SourceLabDetectorMessenger::GetCurrentValue(G4UIcommand* command)
+G4String BaseLabDetectorMessenger::GetCurrentValue(G4UIcommand* command)
 {
   if (command == fSetWorldSizeCmd || command == fSetWorldSizeLegacyCmd) {
     return G4UIcommand::ConvertToString(fDetector->GetWorldSize(), "m");
@@ -221,4 +221,4 @@ G4String SourceLabDetectorMessenger::GetCurrentValue(G4UIcommand* command)
   return "";
 }
 
-}  // namespace SourceLab
+}  // namespace BaseLab

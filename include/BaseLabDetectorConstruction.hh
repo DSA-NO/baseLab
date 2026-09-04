@@ -1,5 +1,5 @@
-#ifndef SourceLabDetectorConstruction_h
-#define SourceLabDetectorConstruction_h 1
+#ifndef BaseLabDetectorConstruction_h
+#define BaseLabDetectorConstruction_h 1
 
 #include "G4SystemOfUnits.hh"
 #include "G4VUserDetectorConstruction.hh"
@@ -7,9 +7,9 @@
 
 class G4VPhysicalVolume;
 
-namespace SourceLab
+namespace BaseLab
 {
-class SourceLabDetectorMessenger;
+class BaseLabDetectorMessenger;
 
 struct DetectorConfig
 {
@@ -24,11 +24,11 @@ struct DetectorConfig
   G4String sourceParticle = "gamma";
 };
 
-class SourceLabDetectorConstruction : public G4VUserDetectorConstruction
+class BaseLabDetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
-    SourceLabDetectorConstruction();
-    ~SourceLabDetectorConstruction() override;
+    BaseLabDetectorConstruction();
+    ~BaseLabDetectorConstruction() override;
 
     G4VPhysicalVolume* Construct() override;
     void ConstructSDandField() override;
@@ -55,13 +55,13 @@ class SourceLabDetectorConstruction : public G4VUserDetectorConstruction
     void DefineMaterials();
     G4VPhysicalVolume* DefineVolumes();
 
-    SourceLabDetectorMessenger* fMessenger = nullptr;
+    BaseLabDetectorMessenger* fMessenger = nullptr;
     G4bool fCheckOverlaps = true;
 
     DetectorConfig fConfig;
     G4LogicalVolume* fSampleLog = nullptr;
 };
 
-}  // namespace SourceLab
+}  // namespace BaseLab
 
 #endif

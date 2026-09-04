@@ -1,21 +1,21 @@
-#include "SourceLabRunAction.hh"
+#include "BaseLabRunAction.hh"
 
-#include "SourceLabDetectorConstruction.hh"
-#include "SourceLabEventAction.hh"
+#include "BaseLabDetectorConstruction.hh"
+#include "BaseLabEventAction.hh"
 
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 
-namespace SourceLab
+namespace BaseLab
 {
 
-SourceLabRunAction::SourceLabRunAction(SourceLabDetectorConstruction* detectorConstruction)
+BaseLabRunAction::BaseLabRunAction(BaseLabDetectorConstruction* detectorConstruction)
 : fDetectorConstruction(detectorConstruction)
 {
 }
 
-void SourceLabRunAction::BeginOfRunAction(const G4Run*)
+void BaseLabRunAction::BeginOfRunAction(const G4Run*)
 {
   G4cout << "Starting run." << G4endl;
   if (fDetectorConstruction) {
@@ -23,19 +23,19 @@ void SourceLabRunAction::BeginOfRunAction(const G4Run*)
     G4cout << "Sample depth: " << fDetectorConstruction->GetSampleDepth() / cm << " cm" << G4endl;
   }
 
-  const auto* eventActionConst = dynamic_cast<const SourceLabEventAction*>(
+  const auto* eventActionConst = dynamic_cast<const BaseLabEventAction*>(
     G4RunManager::GetRunManager()->GetUserEventAction());
   if (eventActionConst) {
-    auto* eventAction = const_cast<SourceLabEventAction*>(eventActionConst);
+    auto* eventAction = const_cast<BaseLabEventAction*>(eventActionConst);
     eventAction->Reset();
   }
 }
 
-void SourceLabRunAction::EndOfRunAction(const G4Run* run)
+void BaseLabRunAction::EndOfRunAction(const G4Run* run)
 {
   G4cout << "Run summary: " << run->GetNumberOfEvent() << " events" << G4endl;
 
-  const auto* eventActionConst = dynamic_cast<const SourceLabEventAction*>(
+  const auto* eventActionConst = dynamic_cast<const BaseLabEventAction*>(
     G4RunManager::GetRunManager()->GetUserEventAction());
   if (eventActionConst) {
     G4cout << "Total energy deposit in sample: " << eventActionConst->GetTotalEnergyDeposit() / MeV << " MeV"
@@ -43,4 +43,4 @@ void SourceLabRunAction::EndOfRunAction(const G4Run* run)
   }
 }
 
-}  // namespace SourceLab
+}  // namespace BaseLab

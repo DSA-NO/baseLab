@@ -1,5 +1,5 @@
-#include "SourceLabActionInitialization.hh"
-#include "SourceLabDetectorConstruction.hh"
+#include "BaseLabActionInitialization.hh"
+#include "BaseLabDetectorConstruction.hh"
 
 #include "FTFP_BERT.hh"
 #include "G4RunManagerFactory.hh"
@@ -12,7 +12,7 @@ namespace
 void PrintUsage()
 {
   G4cout << " Usage: " << G4endl;
-  G4cout << " sourceLab [-b macro] [-v macro] [-t nThreads]" << G4endl;
+  G4cout << " baseLab [-b macro] [-v macro] [-t nThreads]" << G4endl;
   G4cout << "   -b macro  : batch mode, execute the given macro" << G4endl;
   G4cout << "   -v macro  : visualize, execute the macro, and keep the UI open" << G4endl;
   G4cout << "   -t N      : number of threads for multi-threaded builds" << G4endl;
@@ -78,10 +78,10 @@ int main(int argc, char** argv)
   }
 #endif
 
-  auto detector = new SourceLab::SourceLabDetectorConstruction();
+  auto detector = new BaseLab::BaseLabDetectorConstruction();
   runManager->SetUserInitialization(detector);
   runManager->SetUserInitialization(new FTFP_BERT);
-  runManager->SetUserInitialization(new SourceLab::SourceLabActionInitialization(detector));
+  runManager->SetUserInitialization(new BaseLab::BaseLabActionInitialization(detector));
 
   auto visManager = new G4VisExecutive;
   visManager->Initialize();

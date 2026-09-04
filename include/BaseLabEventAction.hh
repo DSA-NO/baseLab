@@ -1,17 +1,17 @@
-#ifndef SourceLabEventAction_h
-#define SourceLabEventAction_h 1
+#ifndef BaseLabEventAction_h
+#define BaseLabEventAction_h 1
 
 #include "G4SystemOfUnits.hh"
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 
-namespace SourceLab
+namespace BaseLab
 {
-class SourceLabEventAction : public G4UserEventAction
+class BaseLabEventAction : public G4UserEventAction
 {
   public:
-    SourceLabEventAction();
-    ~SourceLabEventAction() override = default;
+    BaseLabEventAction();
+    ~BaseLabEventAction() override = default;
 
     void BeginOfEventAction(const G4Event*) override;
     void EndOfEventAction(const G4Event*) override;
@@ -23,6 +23,6 @@ class SourceLabEventAction : public G4UserEventAction
     G4double fTotalEnergyDeposit = 0.0;
 };
 
-}  // namespace SourceLab
+}  // namespace BaseLab
 
 #endif

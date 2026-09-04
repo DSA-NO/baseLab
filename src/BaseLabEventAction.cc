@@ -1,31 +1,31 @@
-#include "SourceLabEventAction.hh"
+#include "BaseLabEventAction.hh"
 
 #include "G4Event.hh"
 #include "G4SDManager.hh"
 #include "G4THitsMap.hh"
 #include "G4VHitsCollection.hh"
 
-namespace SourceLab
+namespace BaseLab
 {
 
-SourceLabEventAction::SourceLabEventAction() = default;
+BaseLabEventAction::BaseLabEventAction() = default;
 
-void SourceLabEventAction::Reset()
+void BaseLabEventAction::Reset()
 {
   fTotalEnergyDeposit = 0.0;
 }
 
-G4double SourceLabEventAction::GetTotalEnergyDeposit() const
+G4double BaseLabEventAction::GetTotalEnergyDeposit() const
 {
   return fTotalEnergyDeposit;
 }
 
-void SourceLabEventAction::BeginOfEventAction(const G4Event*)
+void BaseLabEventAction::BeginOfEventAction(const G4Event*)
 {
   Reset();
 }
 
-void SourceLabEventAction::EndOfEventAction(const G4Event* anEvent)
+void BaseLabEventAction::EndOfEventAction(const G4Event* anEvent)
 {
   auto* hce = anEvent->GetHCofThisEvent();
   if (!hce) {
@@ -49,4 +49,4 @@ void SourceLabEventAction::EndOfEventAction(const G4Event* anEvent)
   }
 }
 
-}  // namespace SourceLab
+}  // namespace BaseLab

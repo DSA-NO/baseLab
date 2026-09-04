@@ -1,17 +1,17 @@
-#include "SourceLabPrimaryGeneratorAction.hh"
+#include "BaseLabPrimaryGeneratorAction.hh"
 
-#include "SourceLabDetectorConstruction.hh"
+#include "BaseLabDetectorConstruction.hh"
 
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
 #include "G4SystemOfUnits.hh"
 
-namespace SourceLab
+namespace BaseLab
 {
 
-SourceLabPrimaryGeneratorAction::SourceLabPrimaryGeneratorAction(
-  SourceLabDetectorConstruction* detectorConstruction)
+BaseLabPrimaryGeneratorAction::BaseLabPrimaryGeneratorAction(
+  BaseLabDetectorConstruction* detectorConstruction)
 : fDetectorConstruction(detectorConstruction)
 {
   fParticleGun = new G4ParticleGun(1);
@@ -24,12 +24,12 @@ SourceLabPrimaryGeneratorAction::SourceLabPrimaryGeneratorAction(
   }
 }
 
-SourceLabPrimaryGeneratorAction::~SourceLabPrimaryGeneratorAction()
+BaseLabPrimaryGeneratorAction::~BaseLabPrimaryGeneratorAction()
 {
   delete fParticleGun;
 }
 
-void SourceLabPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+void BaseLabPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   if (!fParticleGun) {
     return;
@@ -49,4 +49,4 @@ void SourceLabPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
-}  // namespace SourceLab
+}  // namespace BaseLab

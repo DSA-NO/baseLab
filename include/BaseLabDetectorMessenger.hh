@@ -1,26 +1,26 @@
-#ifndef SourceLabDetectorMessenger_h
-#define SourceLabDetectorMessenger_h 1
+#ifndef BaseLabDetectorMessenger_h
+#define BaseLabDetectorMessenger_h 1
 
 #include "G4UImessenger.hh"
 
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcommand;
 
-namespace SourceLab
+namespace BaseLab
 {
-class SourceLabDetectorConstruction;
+class BaseLabDetectorConstruction;
 
-class SourceLabDetectorMessenger : public G4UImessenger
+class BaseLabDetectorMessenger : public G4UImessenger
 {
   public:
-    explicit SourceLabDetectorMessenger(SourceLabDetectorConstruction* detector);
-    ~SourceLabDetectorMessenger() override;
+    explicit BaseLabDetectorMessenger(BaseLabDetectorConstruction* detector);
+    ~BaseLabDetectorMessenger() override;
 
     void SetNewValue(G4UIcommand* command, G4String newValue) override;
     G4String GetCurrentValue(G4UIcommand* command) override;
 
   private:
-    SourceLabDetectorConstruction* fDetector = nullptr;
+    BaseLabDetectorConstruction* fDetector = nullptr;
 
     // Generic geometry commands.
     G4UIcmdWithADoubleAndUnit* fSetWorldSizeCmd = nullptr;
@@ -46,6 +46,6 @@ class SourceLabDetectorMessenger : public G4UImessenger
     G4UIcommand* fSetParticleNameLegacyCmd = nullptr;
 };
 
-}  // namespace SourceLab
+}  // namespace BaseLab
 
 #endif

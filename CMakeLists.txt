@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16...3.30)
-project(sourceLab LANGUAGES CXX)
+project(baseLab LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,9 +10,9 @@ find_package(Geant4 REQUIRED ui_all vis_all)
 file(GLOB SOURCE_LAB_SOURCES ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB SOURCE_LAB_HEADERS ${PROJECT_SOURCE_DIR}/include/*.hh)
 
-add_executable(sourceLab sourceLab.cc ${SOURCE_LAB_SOURCES} ${SOURCE_LAB_HEADERS})
-target_include_directories(sourceLab PRIVATE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(sourceLab PRIVATE ${Geant4_LIBRARIES})
+add_executable(baseLab baseLab.cc ${SOURCE_LAB_SOURCES} ${SOURCE_LAB_HEADERS})
+target_include_directories(baseLab PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(baseLab PRIVATE ${Geant4_LIBRARIES})
 
 set(SOURCE_LAB_MACROS
   init_vis.mac
@@ -29,4 +29,4 @@ foreach(_macro ${SOURCE_LAB_MACROS})
   endif()
 endforeach()
 
-install(TARGETS sourceLab RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS baseLab RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
