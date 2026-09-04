@@ -4,7 +4,15 @@ This project is a small Geant4 application for testing geometry, materials, and 
 
 ## Quick start
 
-Use the shipped micromamba helper for the recommended workflow:
+If micromamba is missing or stale, refresh it first. These helper scripts are intended for Linux/macOS shells; on Windows, use WSL, Git Bash, or another Unix-like shell and follow the same steps.
+
+```bash
+cd baseLab
+./scripts/install-micromamba.sh
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Then use the shipped micromamba helper for the recommended workflow:
 
 ```bash
 cd baseLab
