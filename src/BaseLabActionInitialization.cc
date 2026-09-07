@@ -21,7 +21,7 @@ void BaseLabActionInitialization::BuildForMaster() const
 
 void BaseLabActionInitialization::Build() const
 {
-  SetUserAction(new BaseLabPrimaryGeneratorAction(fDetectorConstruction));
+  SetUserAction(new BaseLabPrimaryGeneratorAction());
   auto* eventAction = new BaseLabEventAction;
   SetUserAction(eventAction);
   SetUserAction(new BaseLabRunAction(fDetectorConstruction));

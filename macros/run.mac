@@ -2,7 +2,11 @@
 /baseLab/geometry/sampleDepth 10 cm
 /baseLab/geometry/sampleRadius 5 cm
 /baseLab/geometry/sampleThickness 1 mm
-/baseLab/source/energy 1.25 MeV
-/baseLab/source/particle gamma
 /run/initialize
+/gps/particle gamma
+/gps/ene/type Mono
+/gps/ene/mono 1.25 MeV
+/gps/pos/type Point
+/gps/pos/centre 0 0 -0.75 m
+/gps/ang/type iso
 /run/beamOn 100

@@ -6,18 +6,15 @@
 
 namespace BaseLab
 {
-class BaseLabDetectorConstruction;
-
 class BaseLabPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
-    explicit BaseLabPrimaryGeneratorAction(BaseLabDetectorConstruction* detectorConstruction = nullptr);
+    BaseLabPrimaryGeneratorAction();
     ~BaseLabPrimaryGeneratorAction() override;
 
     void GeneratePrimaries(G4Event* anEvent) override;
 
   private:
-    BaseLabDetectorConstruction* fDetectorConstruction = nullptr;
     G4GeneralParticleSource* fParticleSource = nullptr;
 };
 
