@@ -1,5 +1,7 @@
 # baseLab
 
+[![CI (main)](https://github.com/DSA-NO/baseLab/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/DSA-NO/baseLab/actions/workflows/ci.yml?query=branch%3Amain+event%3Apush)
+
 This project is a small Geant4 application for testing geometry, materials, and particle generation in a simple setup.
 
 ## Start Here (new users)
