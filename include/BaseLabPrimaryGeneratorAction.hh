@@ -1,8 +1,10 @@
 #ifndef BaseLabPrimaryGeneratorAction_h
 #define BaseLabPrimaryGeneratorAction_h 1
 
-#include "G4GeneralParticleSource.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
+
+class G4Event;
+class G4GeneralParticleSource;
 
 namespace BaseLab
 {
@@ -12,7 +14,7 @@ class BaseLabPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     BaseLabPrimaryGeneratorAction();
     ~BaseLabPrimaryGeneratorAction() override;
 
-    void GeneratePrimaries(G4Event* anEvent) override;
+    void GeneratePrimaries(G4Event* event) override;
 
   private:
     G4GeneralParticleSource* fParticleSource = nullptr;
