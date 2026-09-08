@@ -31,6 +31,7 @@ class BaseLabRunAction : public G4UserRunAction
   private:
     void ConfigureCommands();
     void SetOutputTag(const G4String& tag);
+    void SetOutputSource(const G4String& source);
     void SetOutputDepth(G4double depth);
     G4String BuildOutputFileName() const;
     static G4String SanitizeForFileName(const G4String& value);

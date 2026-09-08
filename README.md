@@ -78,11 +78,14 @@ Set metadata in a macro before `/run/beamOn`:
 
 ```tcl
 /baseLab/output/tag ref-6mv-depth5
-/baseLab/output/source linac-6mv
+/baseLab/output/source 6mv
 /baseLab/output/geometry waterbox
 /baseLab/output/region sample
 /baseLab/output/depth 5 cm
 ```
+
+Allowed source labels are: `unspecified`, `co60`, `cs137`, `6mv`, `10mv`.
+Legacy aliases like `linac-6mv`, `linac-10mv`, `cs-137`, and `cobalt-60` are accepted and canonicalized.
 
 Output file naming:
 

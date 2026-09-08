@@ -11,10 +11,55 @@
 #include "G4SystemOfUnits.hh"
 #include "G4Threading.hh"
 #include "G4UnitsTable.hh"
+#include <array>
 #include <cctype>
 
 namespace BaseLab
 {
+
+namespace
+{
+G4String ToLower(const G4String& value)
+{
+  G4String out = value;
+  for (auto& ch : out) {
+    ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+  }
+  return out;
+}
+
+bool TryCanonicalSource(const G4String& source, G4String& canonical)
+{
+  struct Alias
+  {
+    const char* label;
+    const char* canonical;
+  };
+
+  static constexpr std::array<Alias, 9> kAliases{{
+    {"unspecified", "unspecified"},
+    {"co60", "co60"},
+    {"cobalt-60", "co60"},
+    {"cs137", "cs137"},
+    {"cs-137", "cs137"},
+    {"6mv", "6mv"},
+    {"linac-6mv", "6mv"},
+    {"10mv", "10mv"},
+    {"linac-10mv", "10mv"},
+  }};
+
+  const auto normalized = ToLower(source);
+  for (const auto& entry : kAliases) {
+    if (normalized == entry.label) {
+      canonical = entry.canonical;
+      return true;
+    }
+  }
+  return false;
+}
+
+constexpr const char* kSourceCandidates = "unspecified co60 cs137 6mv 10mv";
+}  // namespace
 
 BaseLabRunAction::BaseLabRunAction(BaseLabDetectorConstruction* detectorConstruction,
   const G4String& emModel,
@@ -74,9 +119,12 @@ void BaseLabRunAction::ConfigureCommands()
   tagCmd.SetParameterName("tag", false);
   tagCmd.SetStates(G4State_PreInit, G4State_Idle);
 
-  auto& sourceCmd = fMessenger->DeclareProperty("source", fOutputSource);
-  sourceCmd.SetGuidance("Set source metadata string stored in runinfo ntuple.");
+  auto& sourceCmd = fMessenger->DeclareMethod("source", &BaseLabRunAction::SetOutputSource,
+                                               "Set source metadata stored in runinfo ntuple.");
+  sourceCmd.SetGuidance("Set source metadata stored in runinfo ntuple.");
+  sourceCmd.SetGuidance("Allowed values: unspecified, co60, cs137, 6mv, 10mv.");
   sourceCmd.SetParameterName("source", false);
+  sourceCmd.SetCandidates(kSourceCandidates);
   sourceCmd.SetStates(G4State_PreInit, G4State_Idle);
 
   auto& geometryCmd = fMessenger->DeclareProperty("geometry", fOutputGeometry);
@@ -118,6 +166,20 @@ void BaseLabRunAction::SetOutputTag(const G4String& tag)
   }
 
   fOutputTag = tag;
+}
+
+void BaseLabRunAction::SetOutputSource(const G4String& source)
+{
+  G4String canonical;
+  if (!TryCanonicalSource(source, canonical)) {
+    G4ExceptionDescription msg;
+    msg << "Invalid source metadata '" << source
+        << "'. Allowed values: unspecified, co60, cs137, 6mv, 10mv.";
+    G4Exception("BaseLabRunAction::SetOutputSource", "BaseLabOutput003", FatalException, msg);
+    return;
+  }
+
+  fOutputSource = canonical;
 }
 
 void BaseLabRunAction::SetOutputDepth(G4double depth)
