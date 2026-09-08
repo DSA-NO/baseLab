@@ -22,9 +22,9 @@ void BaseLabActionInitialization::BuildForMaster() const
 void BaseLabActionInitialization::Build() const
 {
   SetUserAction(new BaseLabPrimaryGeneratorAction());
-  auto* eventAction = new BaseLabEventAction;
-  SetUserAction(eventAction);
-  SetUserAction(new BaseLabRunAction(fDetectorConstruction));
+  auto* runAction = new BaseLabRunAction(fDetectorConstruction);
+  SetUserAction(runAction);
+  SetUserAction(new BaseLabEventAction(runAction));
 }
 
 }  // namespace BaseLab

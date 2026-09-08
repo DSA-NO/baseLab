@@ -7,20 +7,24 @@
 
 namespace BaseLab
 {
+class BaseLabRunAction;
+
 class BaseLabEventAction : public G4UserEventAction
 {
   public:
-    BaseLabEventAction();
+    explicit BaseLabEventAction(BaseLabRunAction* runAction = nullptr);
     ~BaseLabEventAction() override = default;
 
     void BeginOfEventAction(const G4Event*) override;
     void EndOfEventAction(const G4Event*) override;
 
-    void Reset();
-    G4double GetTotalEnergyDeposit() const;
+    void ResetEvent();
+    G4double GetEventEnergyDeposit() const;
 
   private:
-    G4double fTotalEnergyDeposit = 0.0;
+    BaseLabRunAction* fRunAction = nullptr;
+    G4int fSampleEdepCollectionID = -1;
+    G4double fEventEnergyDeposit = 0.0;
 };
 
 }  // namespace BaseLab
