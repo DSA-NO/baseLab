@@ -5,6 +5,7 @@
 /baseLab/geometry/sampleSkinThickness 0.25 mm
 /baseLab/geometry/sampleEndCapArea 1 cm2
 /baseLab/geometry/sampleEndCapThickness 0.25 mm
+# The internal depth scorer sits 1 cm inside the sample body and uses the same radius/thickness as the end cap.
 
 # Allow nested /control/execute to resolve source macros in root or build workflows.
 /control/macroPath .:macros:../macros
