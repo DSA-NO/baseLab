@@ -14,6 +14,7 @@
 #include "BaseLabMacroRuntime.hh"
 
 #include <array>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <string>
