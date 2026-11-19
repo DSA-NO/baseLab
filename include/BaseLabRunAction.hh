@@ -5,7 +5,7 @@
 #include "G4GenericMessenger.hh"
 #include "G4UserRunAction.hh"
 #include "globals.hh"
-#include "ScoreStatistics.hh"
+#include "BaseLabScoreStatistics.hh"
 
 #include <memory>
 
@@ -43,7 +43,7 @@ class BaseLabRunAction : public G4UserRunAction
     G4Accumulable<G4double> fRunDose = 0.0;
     G4Accumulable<G4double> fRunEnergyDeposit = 0.0;
     G4Accumulable<G4double> fRunTrackLength = 0.0;
-    ScoreStatistics fScoreStatistics;
+    BaseLabScoreStatistics fScoreStatistics;
     G4int fStatisticsNtupleId = -1;
     G4int fSampleNtupleId = -1;
     G4int fRunNtupleId = -1;

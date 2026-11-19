@@ -122,7 +122,7 @@ BaseLabRunAction::BaseLabRunAction(BaseLabDetectorConstruction* detectorConstruc
   analysisManager->CreateNtupleSColumn("Geant4Version");
   analysisManager->CreateNtupleSColumn("RandomEngine");
   analysisManager->FinishNtuple(fRunInfoNtupleId);
-  fStatisticsNtupleId = ScoreStatistics::CreateNtuple();
+  fStatisticsNtupleId = BaseLabScoreStatistics::CreateNtuple();
 }
 
 void BaseLabRunAction::ConfigureCommands()
