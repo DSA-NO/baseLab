@@ -12,8 +12,12 @@
 #include "G4Threading.hh"
 #include "G4UImanager.hh"
 #include "G4UnitsTable.hh"
+#include "G4Version.hh"
+#include "Randomize.hh"
 #include <array>
 #include <cctype>
+#include <iomanip>
+#include <sstream>
 
 namespace BaseLab
 {
@@ -60,6 +64,14 @@ bool TryCanonicalSource(const G4String& source, G4String& canonical)
 }
 
 constexpr const char* kSourceCandidates = "unspecified co60 cs137 6mv 10mv";
+
+// Scientific notation avoids G4BestUnit rounding tiny-but-real values down to a displayed "0".
+G4String ToScientific(G4double value, G4double unit, const G4String& unitLabel)
+{
+  std::ostringstream oss;
+  oss << std::scientific << std::setprecision(6) << (value / unit) << " " << unitLabel;
+  return oss.str();
+}
 }  // namespace
 
 BaseLabRunAction::BaseLabRunAction(BaseLabDetectorConstruction* detectorConstruction,
@@ -75,6 +87,7 @@ BaseLabRunAction::BaseLabRunAction(BaseLabDetectorConstruction* detectorConstruc
   accumulableManager->Register(fRunDose);
   accumulableManager->Register(fRunEnergyDeposit);
   accumulableManager->Register(fRunTrackLength);
+  accumulableManager->Register(&fScoreStatistics);
 
   auto* analysisManager = G4AnalysisManager::Instance();
   analysisManager->SetVerboseLevel(1);
@@ -106,7 +119,10 @@ BaseLabRunAction::BaseLabRunAction(BaseLabDetectorConstruction* detectorConstruc
   analysisManager->CreateNtupleSColumn("RadioactiveDecay");
   analysisManager->CreateNtupleIColumn("Events");
   analysisManager->CreateNtupleIColumn("ThreadId");
+  analysisManager->CreateNtupleSColumn("Geant4Version");
+  analysisManager->CreateNtupleSColumn("RandomEngine");
   analysisManager->FinishNtuple(fRunInfoNtupleId);
+  fStatisticsNtupleId = ScoreStatistics::CreateNtuple();
 }
 
 void BaseLabRunAction::ConfigureCommands()
@@ -273,12 +289,17 @@ void BaseLabRunAction::EndOfRunAction(const G4Run* run)
     analysisManager->FillNtupleSColumn(fRunInfoNtupleId, 6, fEnableRadioactiveDecay ? "on" : "off");
     analysisManager->FillNtupleIColumn(fRunInfoNtupleId, 7, run->GetNumberOfEvent());
     analysisManager->FillNtupleIColumn(fRunInfoNtupleId, 8, G4Threading::G4GetThreadId());
+    analysisManager->FillNtupleSColumn(fRunInfoNtupleId, 9, G4Version);
+    analysisManager->FillNtupleSColumn(fRunInfoNtupleId, 10, G4Random::getTheEngine()->name());
     analysisManager->AddNtupleRow(fRunInfoNtupleId);
   }
-  if (finalizeOutput) {
-    analysisManager->Write();
-    analysisManager->CloseFile(false);
+  if (writeRunRow) {
+    fScoreStatistics.WriteRows(fStatisticsNtupleId, -1);
+  }
+  analysisManager->Write();
+  analysisManager->CloseFile(false);
 
+  if (finalizeOutput) {
     G4cout << "Run complete: events=" << run->GetNumberOfEvent()
            << ", file=" << BuildOutputFileName()
            << ", source=" << fOutputSource
@@ -290,9 +311,10 @@ void BaseLabRunAction::EndOfRunAction(const G4Run* run)
            << G4endl;
 
     G4cout << "Run summary: " << run->GetNumberOfEvent() << " events" << G4endl;
-    G4cout << "Total dose in sample: " << G4BestUnit(GetRunDose(), "Dose") << G4endl;
-    G4cout << "Total energy deposit in sample: " << G4BestUnit(GetRunEnergyDeposit(), "Energy") << G4endl;
-    G4cout << "Total charged track length in sample: " << G4BestUnit(GetRunTrackLength(), "Length") << G4endl;
+    G4cout << "Total dose in sample: " << ToScientific(GetRunDose(), gray, "Gy") << G4endl;
+    G4cout << "Total energy deposit in sample: " << ToScientific(GetRunEnergyDeposit(), eV, "eV") << G4endl;
+    G4cout << "Total charged track length in sample: " << ToScientific(GetRunTrackLength(), mm, "mm") << G4endl;
+    fScoreStatistics.Print("sample");
   }
 }
 
@@ -301,6 +323,7 @@ void BaseLabRunAction::AddEventScoring(G4double eventDose, G4double eventEnergyD
   fRunDose += eventDose;
   fRunEnergyDeposit += eventEnergyDeposit;
   fRunTrackLength += eventTrackLength;
+  fScoreStatistics.Add(eventDose, eventEnergyDeposit, eventTrackLength);
 }
 
 G4double BaseLabRunAction::GetRunDose() const
