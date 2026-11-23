@@ -146,15 +146,15 @@ Output file naming:
 - default tag (unset): `baseLab-default.root`
 - custom tag: `baseLab-<tag>.root`
 
-Each run writes its ROOT file under `output/<UTC-timestamp>/` in the baseLab project directory. A numeric suffix is added if the timestamp already exists, so repeated or concurrent runs do not overwrite each other. The full output path is printed as `Output path:`. Set `LAB_OUTPUT_DIR` to use a different parent directory; a relative path is resolved from the directory where the application starts, before it switches to the macro directory. If the build's source directory no longer exists, the default is `output/` in the startup directory. The project output folder is Git-ignored; old results are not automatically deleted.
+Each run writes its ROOT file under `output/<UTC-timestamp>/` in the baseLab project directory. A numeric suffix is added if the timestamp already exists, so repeated or concurrent runs do not overwrite each other. The full output path is printed as `Output path:`. Set `LAB_OUTPUT_DIR` to use a different parent directory; a relative path is resolved from the directory where the application starts, before it switches to the macro directory. If the build's source directory no longer exists, the default is `output/` in the startup directory. The `output/` folder is included in the repository, but generated results are Git-ignored and are not automatically deleted.
 
 ### Read output with Uproot
 
-NumPy and Uproot are in the lab environment; full ROOT is not required. Replace the filename with the reported `Output path:`:
+NumPy and Uproot are in the lab environment; full ROOT is not required. The `analysis/` folder is reserved for future analysis tools. The path below is illustrative: replace it with the reported `Output path:` from your run.
 
 ```bash
 ./scripts/run-micromamba.sh setup
-./scripts/run-isolated.sh micromamba geant4-baseLab python - /path/to/output.root <<'PY'
+./scripts/run-isolated.sh micromamba geant4-baseLab python - output/2026-01-01T120000Z/baseLab-run-simple.root <<'PY'
 import sys
 import uproot
 
