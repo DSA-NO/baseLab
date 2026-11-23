@@ -51,6 +51,7 @@ class BaseLabRunAction : public G4UserRunAction
 
     std::unique_ptr<G4GenericMessenger> fMessenger;
     G4String fOutputTag = "default";
+    G4String fOutputPath;
     G4String fOutputSource = "unspecified";
     G4String fOutputGeometry = "simple-phantom";
     G4String fOutputRegion = "sample";

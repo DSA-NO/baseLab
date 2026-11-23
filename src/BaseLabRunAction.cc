@@ -1,6 +1,7 @@
 #include "BaseLabRunAction.hh"
 
 #include "BaseLabDetectorConstruction.hh"
+#include "LabOutput.hh"
 
 #include "G4AccumulableManager.hh"
 #include "G4AnalysisManager.hh"
@@ -121,6 +122,7 @@ BaseLabRunAction::BaseLabRunAction(BaseLabDetectorConstruction* detectorConstruc
   analysisManager->CreateNtupleIColumn("ThreadId");
   analysisManager->CreateNtupleSColumn("Geant4Version");
   analysisManager->CreateNtupleSColumn("RandomEngine");
+  analysisManager->CreateNtupleSColumn("RandomState");
   analysisManager->FinishNtuple(fRunInfoNtupleId);
   fStatisticsNtupleId = BaseLabScoreStatistics::CreateNtuple();
 }
@@ -229,7 +231,7 @@ G4String BaseLabRunAction::BuildOutputFileName() const
   return "baseLab-" + tag + ".root";
 }
 
-void BaseLabRunAction::BeginOfRunAction(const G4Run*)
+void BaseLabRunAction::BeginOfRunAction(const G4Run* run)
 {
   auto* accumulableManager = G4AccumulableManager::Instance();
   accumulableManager->Reset();
@@ -239,7 +241,13 @@ void BaseLabRunAction::BeginOfRunAction(const G4Run*)
   if (fOutputDepthCm < 0. && fDetectorConstruction) {
     fOutputDepthCm = fDetectorConstruction->GetSampleDepth() / cm;
   }
-  analysisManager->OpenFile(BuildOutputFileName());
+  fOutputPath = LabOutput::RunFile(isMaster, run->GetRunID(), BuildOutputFileName());
+  if (!analysisManager->OpenFile(fOutputPath)) {
+    G4ExceptionDescription message;
+    message << "Cannot open output file '" << fOutputPath << "'.";
+    G4Exception("BaseLabRunAction::BeginOfRunAction", "BaseLabOutput004", FatalException, message);
+  }
+  if (isMaster) G4cout << "Output path: " << fOutputPath << G4endl;
 
   if (fEnableRadioactiveDecay
       && (!G4Threading::IsMultithreadedApplication() || !isMaster)) {
@@ -291,6 +299,7 @@ void BaseLabRunAction::EndOfRunAction(const G4Run* run)
     analysisManager->FillNtupleIColumn(fRunInfoNtupleId, 8, G4Threading::G4GetThreadId());
     analysisManager->FillNtupleSColumn(fRunInfoNtupleId, 9, G4Version);
     analysisManager->FillNtupleSColumn(fRunInfoNtupleId, 10, G4Random::getTheEngine()->name());
+    analysisManager->FillNtupleSColumn(fRunInfoNtupleId, 11, run->GetRandomNumberStatus());
     analysisManager->AddNtupleRow(fRunInfoNtupleId);
   }
   if (writeRunRow) {
