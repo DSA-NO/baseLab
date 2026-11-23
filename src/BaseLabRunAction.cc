@@ -1,7 +1,7 @@
 #include "BaseLabRunAction.hh"
 
 #include "BaseLabDetectorConstruction.hh"
-#include "LabOutput.hh"
+#include "BaseLabOutput.hh"
 
 #include "G4AccumulableManager.hh"
 #include "G4AnalysisManager.hh"
@@ -241,7 +241,7 @@ void BaseLabRunAction::BeginOfRunAction(const G4Run* run)
   if (fOutputDepthCm < 0. && fDetectorConstruction) {
     fOutputDepthCm = fDetectorConstruction->GetSampleDepth() / cm;
   }
-  fOutputPath = LabOutput::RunFile(isMaster, run->GetRunID(), BuildOutputFileName());
+  fOutputPath = Output::RunFile(isMaster, run->GetRunID(), BuildOutputFileName());
   if (!analysisManager->OpenFile(fOutputPath)) {
     G4ExceptionDescription message;
     message << "Cannot open output file '" << fOutputPath << "'.";
