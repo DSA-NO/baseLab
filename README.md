@@ -64,7 +64,7 @@ rmdir "$tmp"
 
 Run these commands in a shell with `set -e` and `set -o pipefail` so a failed solve or export does not replace the lock. Lock verification checks conda package records, not changes made by pip or manual edits inside an environment.
 
-Builds and batch runs use `scripts/run-isolated.sh` to clear inherited compiler, library, Geant4 dataset, ROOT, CMake and Python paths before activating the lab environment. Operating-system libraries are still required. An interactive shell or a direct `micromamba run` can reintroduce settings from the user's shell.
+Builds, runs and `exec` commands use `scripts/run-isolated.sh` to clear inherited compiler, library, Geant4 dataset, ROOT, CMake and Python paths before activating the lab environment. Operating-system libraries are still required. An interactive shell or a direct `micromamba run` can reintroduce settings from the user's shell.
 
 If you want an interactive shell inside the environment:
 
@@ -153,8 +153,7 @@ Each run writes its ROOT file under `output/<UTC-timestamp>/` in the baseLab pro
 NumPy and Uproot are in the lab environment; full ROOT is not required. The `analysis/` folder is reserved for future analysis tools. The path below is illustrative: replace it with the reported `Output path:` from your run.
 
 ```bash
-./scripts/run-micromamba.sh setup
-./scripts/run-isolated.sh micromamba geant4-baseLab python - output/2026-01-01T120000Z/baseLab-run-simple.root <<'PY'
+./scripts/run-micromamba.sh exec python - output/2026-01-01T120000Z/baseLab-run-simple.root <<'PY'
 import sys
 import uproot
 
@@ -166,6 +165,8 @@ with uproot.open(sys.argv[1]) as root_file:
     print("Events per run/worker:", root_file["runinfo"]["Events"].array(library="np"))
 PY
 ```
+
+The `exec` mode creates or verifies the environment, then runs the command without rebuilding. Relative paths are resolved from the directory where the command is invoked.
 
 The example reads only five doses, not a whole large output file. CI runs CTest and verifies a small generated ROOT file with Uproot.
 
